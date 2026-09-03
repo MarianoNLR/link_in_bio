@@ -39,7 +39,7 @@ The project was built as a complete full-stack application, including authentica
 ## Project Structure
 
 ```text
-link-in-bio/
+link_in_bio/
 ├── backend/
 └── frontend/
 ```
@@ -52,7 +52,7 @@ The frontend and backend are kept as separate applications inside the same repos
 
 ```bash
 git clone <repository-url>
-cd link-in-bio
+cd link_in_bio
 ```
 
 ### 2. Install dependencies
