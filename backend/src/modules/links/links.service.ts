@@ -129,8 +129,10 @@ export class LinksService {
       where: { userId },
       orderBy: { position: 'asc' },
       select: {
+        id: true,
         title: true,
         url: true,
+        position: true,
         clickCount: true,
         isActive: true,
         platform: {
