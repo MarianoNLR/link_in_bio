@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getProfile, updateProfile } from './profile.api'
+import { getProfile, updateProfile, getPublicProfile, uploadAvatar } from './profile.api'
 
 export function useProfile() {
   return useQuery({
@@ -16,5 +16,27 @@ export function useUpdateProfile() {
     onSuccess: (updatedProfile) => {
       queryClient.setQueryData(['profile', 'me'], updatedProfile)
     }
+  })
+}
+
+export function usePublicProfile(username: string) {
+  return useQuery({
+    queryKey: ['profile', username],
+    queryFn: () => getPublicProfile(username),
+  })
+}
+
+export function useUploadAvatar() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: uploadAvatar,
+
+    onSuccess: (updatedProfile) => {
+      queryClient.setQueryData(
+        ['profile', 'me'],
+        updatedProfile,
+      )
+    },
   })
 }
