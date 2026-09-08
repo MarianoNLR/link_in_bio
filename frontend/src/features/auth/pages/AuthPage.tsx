@@ -13,8 +13,8 @@ export function AuthPage() {
     return <Navigate to="/app/profile" replace />
   }
   return (
-    <main className="flex min-h-svh items-center justify-center bg-muted/40 p-4">
+    <section className="flex flex-1 items-center justify-center bg-muted/40 px-4 py-20">
       <AuthCard />
-    </main>
+    </section>
   )
 }
