@@ -1,10 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createLink, deleteLink, getLinks, updateLink } from './links.api';
-import type { CreateLinkInput, Link, UpdateLinkInput } from '../link.types';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createLink,
+  deleteLink,
+  getLinks,
+  updateLink,
+  registerClick,
+  reorderLinks,
+} from "./links.api";
+import type { CreateLinkInput, Link, UpdateLinkInput } from "../link.types";
 
 export function useLinks() {
   return useQuery({
-    queryKey: ['links'],
+    queryKey: ["links"],
     queryFn: getLinks,
   });
 }
@@ -14,11 +21,7 @@ export function useCreateLink() {
 
   return useMutation({
     mutationFn: (data: CreateLinkInput) => createLink(data),
-    onSuccess: (createdLink) => {
-      queryClient.setQueryData<Link[]>(['links'], (links = []) =>
-        [...links, createdLink].sort((a, b) => a.position - b.position),
-      );
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["links"] }),
   });
 }
 
@@ -29,10 +32,8 @@ export function useUpdateLink() {
     mutationFn: ({ linkId, data }: { linkId: string; data: UpdateLinkInput }) =>
       updateLink(linkId, data),
     onSuccess: (updatedLink) => {
-      queryClient.setQueryData<Link[]>(['links'], (links = []) =>
-        links.map((link) =>
-          link.id === updatedLink.id ? updatedLink : link,
-        ),
+      queryClient.setQueryData<Link[]>(["links"], (links = []) =>
+        links.map((link) => (link.id === updatedLink.id ? updatedLink : link)),
       );
     },
   });
@@ -43,10 +44,23 @@ export function useDeleteLink() {
 
   return useMutation({
     mutationFn: deleteLink,
-    onSuccess: (_, deletedLinkId) => {
-      queryClient.setQueryData<Link[]>(['links'], (links = []) =>
-        links.filter((link) => link.id !== deletedLinkId),
-      );
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["links"] }),
+  });
+}
+
+export function useRegisterClick() {
+  return useMutation({
+    mutationFn: registerClick,
+  });
+}
+
+export function useReorderLinks() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (linkIds: string[]) => reorderLinks(linkIds),
+    onSuccess: (updatedLinks) => {
+      queryClient.setQueryData(["links"], updatedLinks);
     },
   });
 }
