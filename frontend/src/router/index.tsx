@@ -4,32 +4,38 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { AuthPage } from '@/features/auth/pages/AuthPage';
 import { ProfilePage } from '@/features/profile/pages/ProfilePage';
 import { PublicProfilePage } from '@/features/profile/pages/PublicProfilePage';
+import { AppLayout } from '@/components/layout/AppLayout';
 
 export const router = createBrowserRouter([
   {
-    path: '/',
-    element: <AuthPage />,
-  },
-  {
-    element: <ProtectedRoute />,
+    element: <AppLayout />,
     children: [
       {
-        path: '/app',
+        path: '/',
+        element: <AuthPage />,
+      },
+      {
+        element: <ProtectedRoute />,
         children: [
           {
-            index: true,
-            element: <Navigate to="profile" replace />,
-          },
-          {
-            path: 'profile',
-            element: <ProfilePage />,
+            path: '/app',
+            children: [
+              {
+                index: true,
+                element: <Navigate to="profile" replace />,
+              },
+              {
+                path: 'profile',
+                element: <ProfilePage />,
+              },
+            ],
           },
         ],
       },
+      {
+        path: '/:username',
+        element: <PublicProfilePage />,
+      },
     ],
-  },
-  {
-    path: '/:username',
-    element: <PublicProfilePage />,
   },
 ]);
