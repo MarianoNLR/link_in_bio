@@ -1,23 +1,27 @@
-import type { Link } from '../link.types'
+import type { PublicLink } from '../link.types'
 import { PublicLinkItem } from './PublicLinkItem'
 
 type PublicLinkListProps = {
-  links: Link[]
-  onVisit?: (link: Link) => void
+  links: PublicLink[]
+  onVisit?: (link: PublicLink) => void
 }
 
 export function PublicLinkList({ links, onVisit }: PublicLinkListProps) {
-  const activeLinks = links
-    .filter((link) => link.isActive)
-    .sort((a, b) => a.position - b.position)
-
-  if (activeLinks.length === 0) return null
+  const sortedLinks = [...links].sort((a, b) => a.position - b.position)
 
   return (
-    <div className="space-y-3">
-      {activeLinks.map((link) => (
-        <PublicLinkItem key={link.id} link={link} onVisit={onVisit} />
-      ))}
-    </div>
+    <section aria-label="Enlaces del perfil">
+      {sortedLinks.length === 0 ? (
+        <p className="text-center text-sm opacity-60">Todavía no hay enlaces publicados.</p>
+      ) : (
+        <ul className="space-y-3">
+          {sortedLinks.map((link) => (
+            <li key={link.id}>
+              <PublicLinkItem link={link} onVisit={onVisit} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }

@@ -19,7 +19,8 @@ export const addLinkSchema = z.object({
       z.coerce
         .number()
         .int('La posición debe ser un número entero')
-        .min(0, 'La posición no puede ser negativa'),
+        .min(1, 'La posición debe ser al menos 1')
+        .transform((position) => position - 1),
     ])
     .optional(),
 })

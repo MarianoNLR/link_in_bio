@@ -14,6 +14,10 @@ export type Link = {
   platform: Platform | null;
 };
 
+export type PublicLink = Pick<Link, 'id' | 'title' | 'url' | 'position'> & {
+  platform: Pick<Platform, 'name' | 'slug'> | null;
+};
+
 export type UpdateLinkInput = {
   title: string;
   url: string;

@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PlatformSelect } from '@/features/platforms/components/PlatformSelect'
 import type { Platform } from '@/features/platforms/types/platform.types'
 import type { Link, UpdateLinkInput } from '../link.types'
 
@@ -74,19 +75,13 @@ export function EditLinkDialog({
 
           <div className="space-y-2">
             <Label htmlFor="edit-link-platform">Plataforma</Label>
-            <select
+            <PlatformSelect
+              key={link.id}
               id="edit-link-platform"
               name="platformId"
+              platforms={platforms}
               defaultValue={link.platform?.id ?? ''}
-              className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              <option value="">Link personalizado</option>
-              {platforms.map((platform) => (
-                <option key={platform.id} value={platform.id}>
-                  {platform.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className="flex items-center gap-2">

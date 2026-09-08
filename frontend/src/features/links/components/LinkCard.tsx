@@ -1,23 +1,34 @@
+import { createElement, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { getPlatformIcon } from '@/features/platforms/lib/platform-icons'
 import type { Link } from '../link.types'
 
-type LinkCardProps = {
+export type LinkCardProps = {
   link: Link
   onEdit: (link: Link) => void
   onDelete?: (link: Link) => void
+  dragHandle?: ReactNode
 }
 
 export function LinkCard({
   link,
   onEdit,
   onDelete,
+  dragHandle,
 }: LinkCardProps) {
   return (
     <Card className={link.isActive ? undefined : 'opacity-60'}>
       <CardContent className="flex items-center justify-between gap-4">
-        <div className="min-w-0">
-          <p className="truncate font-medium">{link.title}</p>
+        {dragHandle}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            {createElement(getPlatformIcon(link.platform?.slug), {
+              'aria-hidden': true,
+              className: 'size-5 shrink-0',
+            })}
+            <p className="truncate font-medium">{link.title}</p>
+          </div>
           <a
             className="block truncate text-sm text-muted-foreground hover:underline"
             href={link.url}

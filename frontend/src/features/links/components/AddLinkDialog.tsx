@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PlatformSelect } from '@/features/platforms/components/PlatformSelect'
 import type { Platform } from '@/features/platforms/types/platform.types'
 import {
   addLinkSchema,
@@ -28,12 +30,18 @@ export function AddLinkDialog({
 }: AddLinkDialogProps) {
   const {
     register,
+    control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<AddLinkFormInput, unknown, AddLinkFormValues>({
     resolver: zodResolver(addLinkSchema),
     defaultValues: { title: '', url: '', platformId: '', position: '' },
   })
+
+  useEffect(() => {
+    if (!open) reset()
+  }, [open, reset])
 
   if (!open) return null
 
@@ -84,19 +92,22 @@ export function AddLinkDialog({
 
           <div className="space-y-2">
             <Label htmlFor="add-link-platform">Plataforma</Label>
-            <select
-              id="add-link-platform"
-              aria-invalid={Boolean(errors.platformId)}
-              className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
-              {...register('platformId')}
-            >
-              <option value="">Link personalizado</option>
-              {platforms.map((platform) => (
-                <option key={platform.id} value={platform.id}>
-                  {platform.name}
-                </option>
-              ))}
-            </select>
+            <Controller
+              name="platformId"
+              control={control}
+              render={({ field }) => (
+                <PlatformSelect
+                  id="add-link-platform"
+                  platforms={platforms}
+                  name={field.name}
+                  value={field.value ?? ''}
+                  onValueChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                  invalid={Boolean(errors.platformId)}
+                />
+              )}
+            />
             {errors.platformId && (
               <p className="text-sm text-destructive">{errors.platformId.message}</p>
             )}
@@ -107,7 +118,8 @@ export function AddLinkDialog({
             <Input
               id="add-link-position"
               type="number"
-              min={0}
+              min={1}
+              placeholder="Al final si queda vacío"
               aria-invalid={Boolean(errors.position)}
               {...register('position')}
             />
