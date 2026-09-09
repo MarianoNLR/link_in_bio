@@ -26,7 +26,10 @@ export class UsersService {
 
   create(data: CreateUserData) {
     return this.prisma.user.create({
-      data,
+      data: {
+        ...data,
+        theme: 'LIGHT',
+      },
     });
   }
 }
