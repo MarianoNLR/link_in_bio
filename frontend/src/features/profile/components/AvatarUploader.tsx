@@ -86,7 +86,7 @@ export function AvatarUploader({
           />
         }
       >
-        <Avatar className="size-42">
+        <Avatar data-profile-avatar className="size-42">
           <AvatarImage src={avatarUrl ?? undefined} alt={displayName} />
           <AvatarFallback>{initials || "?"}</AvatarFallback>
         </Avatar>
