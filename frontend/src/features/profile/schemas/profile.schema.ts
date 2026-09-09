@@ -31,6 +31,7 @@ export const profileSchema = z.object({
     .union([emptyStringToUndefined, z.url("Ingresa una URL válida")])
     .optional(),
   isPublic: z.boolean().optional(),
+  theme: z.enum(["LIGHT", "DARK", "MIDNIGHT", "GRADIENT"]),
 })
 
 export type ProfileFormInput = z.input<typeof profileSchema>

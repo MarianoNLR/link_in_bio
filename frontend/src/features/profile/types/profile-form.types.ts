@@ -1,4 +1,5 @@
 import type { ProfileFormValues } from '../schemas/profile.schema'
+import type { Profile } from '../api/profile.api'
 
 export type ProfileFormProps = {
   initialValues: {
@@ -7,6 +8,7 @@ export type ProfileFormProps = {
     bio?: string | null
     avatarUrl?: string | null
     isPublic: boolean
+    theme: Profile['theme']
   }
   onSubmit: (values: ProfileFormValues) => void
   isPending?: boolean

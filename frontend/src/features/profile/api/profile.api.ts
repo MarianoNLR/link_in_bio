@@ -8,6 +8,7 @@ export type Profile = {
   bio: string | null
   avatarUrl: string | null
   isPublic: boolean
+  theme: 'LIGHT' | 'DARK' | 'MIDNIGHT' | 'GRADIENT'
 }
 
 export function getProfile() {
@@ -18,8 +19,7 @@ export function updateProfile(profileData: Partial<Profile>) {
   return apiClient.patch<Profile>('/profiles/me', profileData)
 }
 
-export type PublicProfile = Pick<Profile, 'username' | 'displayName' | 'bio' | 'avatarUrl'> & {
-  theme: 'LIGHT' | 'DARK' | 'MIDNIGHT' | 'GRADIENT'
+export type PublicProfile = Pick<Profile, 'username' | 'displayName' | 'bio' | 'avatarUrl' | 'theme'> & {
   links: PublicLink[]
 }
 

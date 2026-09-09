@@ -27,6 +27,7 @@ export function ProfileForm({
       bio: initialValues.bio || "",
       avatarUrl: initialValues.avatarUrl || "",
       isPublic: initialValues.isPublic,
+      theme: initialValues.theme ?? "LIGHT",
     },
   })
 
@@ -104,6 +105,27 @@ export function ProfileForm({
         {errors.avatarUrl && (
           <p id="profile-avatar-url-error" className="text-sm text-destructive">
             {errors.avatarUrl.message}
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="profile-theme">Tema del perfil</Label>
+        <select
+          id="profile-theme"
+          aria-invalid={Boolean(errors.theme)}
+          aria-describedby={errors.theme ? "profile-theme-error" : undefined}
+          className="h-9 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
+          {...register("theme")}
+        >
+          <option value="LIGHT">Claro</option>
+          <option value="DARK">Oscuro</option>
+          <option value="MIDNIGHT">Medianoche</option>
+          <option value="GRADIENT">Degradado</option>
+        </select>
+        {errors.theme && (
+          <p id="profile-theme-error" className="text-sm text-destructive">
+            {errors.theme.message}
           </p>
         )}
       </div>
