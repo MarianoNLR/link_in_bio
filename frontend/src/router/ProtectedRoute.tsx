@@ -5,7 +5,7 @@ export function ProtectedRoute() {
   const { data: user, isLoading } = useMe();
 
   if (isLoading) {
-    return <p>Cargando...</p>;
+    return <></>
   }
 
   if (!user) {
