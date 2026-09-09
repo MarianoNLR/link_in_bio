@@ -1,14 +1,26 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { login, register, getMe } from './auth.api';
-import { setAccessToken, getAccessToken, removeAccessToken } from '../lib/auth-token';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { login, register, getMe, logout } from './auth.api';
+import { setAuthTokens, getAccessToken, removeAccessToken } from '../lib/auth-token';
 import { ApiError } from '@/api/api-error';
+
+export function useLogout() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: async () => {
+      await queryClient.cancelQueries();
+      queryClient.clear();
+      window.location.replace('/');
+    },
+  });
+}
 
 export function useRegister() {
   return useMutation({
     mutationFn: register,
 
     onSuccess: (response) => {
-      setAccessToken(response.accessToken);
+      setAuthTokens(response);
     },
   });
 }
@@ -17,7 +29,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: login,
     onSuccess: (response) => {
-      setAccessToken(response.accessToken);
+      setAuthTokens(response);
     },
   });
 }

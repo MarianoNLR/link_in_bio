@@ -1,4 +1,8 @@
-import { apiClient } from '@/api/client';
+import { apiClient, logoutSession } from '@/api/client';
+
+export function logout() {
+  return logoutSession();
+}
 
 export type AuthUser = {
   id: string;
