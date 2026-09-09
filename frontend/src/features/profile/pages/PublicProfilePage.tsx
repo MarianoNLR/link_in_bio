@@ -3,6 +3,7 @@ import { useRegisterClick } from '@/features/links/api/links.queries'
 import { PublicLinkList } from '@/features/links/components/PublicLinkList'
 import { usePublicProfile } from '../api/profile.queries'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 
 const themeClasses = {
   LIGHT: 'bg-slate-50 text-slate-900',
@@ -15,6 +16,8 @@ export function PublicProfilePage() {
   const { username = '' } = useParams<{ username: string }>()
   const { data: profile, isLoading, isError } = usePublicProfile(username)
   const { mutate: registerClick } = useRegisterClick()
+
+  useDocumentTitle(profile ? `${profile.displayName ?? profile.username} | Link in Bio` : 'Link in Bio')
 
   if (isLoading) {
     return (
@@ -29,8 +32,10 @@ export function PublicProfilePage() {
   }
 
   if (isError || !profile) {
+
     return <p>No se pudo cargar el perfil público.</p>
   }
+
   return (
     <section className={`flex-1 px-6 py-20 sm:py-24 ${themeClasses[profile.theme] ?? themeClasses.LIGHT}`}>
       <div

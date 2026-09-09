@@ -6,10 +6,13 @@ import { LinkList } from "@/features/links/components/LinkList";
 import { AvatarUploader } from "../components/AvatarUploader";
 import { ExternalLink } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export function ProfilePage() {
   const { data: profile, isLoading, isError } = useProfile();
   const updateProfile = useUpdateProfile();
+
+  useDocumentTitle("Administrar perfil | Link in Bio");
 
   if (isLoading) {
     return <p>Cargando...</p>;

@@ -1,7 +1,9 @@
 import { useLinks } from "@/features/links/api/links.queries"
+import { useDocumentTitle } from "@/hooks/useDocumentTitle"
 
 export function DashboardPage() {
   const { data: links, isPending, isError } = useLinks()
+  useDocumentTitle("Dashboard | Link in Bio")
 
   if (isPending) {
     return <></>
