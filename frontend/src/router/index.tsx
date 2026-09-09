@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ProtectedRoute } from './ProtectedRoute';
 import { AuthPage } from '@/features/auth/pages/AuthPage';
+import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
 import { ProfilePage } from '@/features/profile/pages/ProfilePage';
 import { PublicProfilePage } from '@/features/profile/pages/PublicProfilePage';
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
               {
                 path: 'profile',
                 element: <ProfilePage />,
+              },
+              {
+                path: 'dashboard',
+                element: <DashboardPage />,
               },
             ],
           },
