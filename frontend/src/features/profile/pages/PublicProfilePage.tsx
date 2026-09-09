@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useRegisterClick } from '@/features/links/api/links.queries'
 import { PublicLinkList } from '@/features/links/components/PublicLinkList'
@@ -17,14 +16,16 @@ export function PublicProfilePage() {
   const { data: profile, isLoading, isError } = usePublicProfile(username)
   const { mutate: registerClick } = useRegisterClick()
 
-  useEffect(() => {
-    if (profile) {
-      console.log(profile)
-    }
-  }, [profile])
-
   if (isLoading) {
-    return <p>Cargando perfil público...</p>
+    return (
+      <div role="status" className="flex flex-1 justify-center px-6 py-24">
+        <span className="sr-only">Cargando perfil público...</span>
+        <span
+          aria-hidden="true"
+          className="mt-8 size-5 animate-spin rounded-full border-2 border-foreground/10 border-t-foreground/30 motion-reduce:animate-none"
+        />
+      </div>
+    )
   }
 
   if (isError || !profile) {
