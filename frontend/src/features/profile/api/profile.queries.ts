@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { getProfile, updateProfile, getPublicProfile, uploadAvatar } from './profile.api'
+import { deleteAvatar, getProfile, updateProfile, getPublicProfile, uploadAvatar } from './profile.api'
 
 export function useProfile() {
   return useQuery({
@@ -37,6 +37,17 @@ export function useUploadAvatar() {
         ['profile', 'me'],
         updatedProfile,
       )
+    },
+  })
+}
+
+export function useDeleteAvatar() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteAvatar,
+    onSuccess: (updatedProfile) => {
+      queryClient.setQueryData(['profile', 'me'], updatedProfile)
     },
   })
 }

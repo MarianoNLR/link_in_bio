@@ -3,7 +3,6 @@ import {
   IsEnum,
   IsOptional,
   IsString,
-  IsUrl,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -26,10 +25,6 @@ export class UpdateProfileDto {
   @IsString()
   @MaxLength(160)
   bio?: string;
-
-  @IsOptional()
-  @IsUrl()
-  avatarUrl?: string;
 
   @IsOptional()
   @IsEnum(Theme)

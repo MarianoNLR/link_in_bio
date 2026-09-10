@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   FileTypeValidator,
   MaxFileSizeValidator,
@@ -61,6 +62,12 @@ export class ProfileController {
     file: Express.Multer.File,
   ) {
     return this.profileService.updateAvatar(userId, file);
+  }
+
+  @Delete('me/avatar')
+  @UseGuards(AuthGuard)
+  deleteAvatar(@CurrentUserId() userId: string) {
+    return this.profileService.deleteAvatar(userId);
   }
 
   @Get(':username')

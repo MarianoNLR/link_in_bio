@@ -52,6 +52,38 @@ export class ProfileService {
     return updatedProfile;
   }
 
+  async deleteAvatar(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { avatarPublicId: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.avatarPublicId) {
+      await this.cloudinary.deleteImage(user.avatarPublicId);
+    }
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        avatarUrl: null,
+        avatarPublicId: null,
+      },
+      select: {
+        id: true,
+        username: true,
+        displayName: true,
+        bio: true,
+        avatarUrl: true,
+        theme: true,
+        isPublic: true,
+      },
+    });
+  }
+
   async getMyProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

@@ -32,3 +32,7 @@ export function uploadAvatar(file: File) {
   formData.append('file', file)
   return apiClient.postFormData<Profile>('/profiles/me/avatar', formData)
 }
+
+export function deleteAvatar() {
+  return apiClient.delete<Profile>('/profiles/me/avatar')
+}

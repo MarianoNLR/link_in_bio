@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pencil, Save } from "lucide-react";
+import { Pencil, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 
-import { useUploadAvatar } from "../api/profile.queries";
+import { useDeleteAvatar, useUploadAvatar } from "../api/profile.queries";
 
 type AvatarUploaderProps = {
   avatarUrl: string | null;
@@ -26,11 +28,14 @@ export function AvatarUploader({
   displayName,
 }: AvatarUploaderProps) {
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const uploadAvatar = useUploadAvatar();
+  const deleteAvatar = useDeleteAvatar();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isPending = uploadAvatar.isPending || deleteAvatar.isPending;
 
   const initials = displayName
     .split(" ")
@@ -69,11 +74,27 @@ export function AvatarUploader({
     });
   }
 
+  function handleDelete() {
+    setConfirmOpen(false);
+
+    deleteAvatar.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Imagen eliminada");
+        setOpen(false);
+        setFile(null);
+        setPreviewUrl(null);
+      },
+      onError: () => {
+        toast.error("No se pudo eliminar la imagen");
+      },
+    });
+  }
+
   return (
     <Dialog
       open={open}
       onOpenChange={(nextOpen) => {
-        if (uploadAvatar.isPending) return;
+        if (isPending) return;
 
         setOpen(nextOpen);
       }}
@@ -103,7 +124,7 @@ export function AvatarUploader({
               variant="ghost"
               className="absolute top-2 right-2 cursor-pointer"
               size="icon-sm"
-              disabled={uploadAvatar.isPending}
+              disabled={isPending}
             >
               <X className="size-4" />
               <span className="sr-only">Cerrar</span>
@@ -128,7 +149,7 @@ export function AvatarUploader({
             type="file"
             accept="image/png,image/jpeg,image/webp"
             onChange={handleFileChange}
-            disabled={uploadAvatar.isPending}
+            disabled={isPending}
             className="hidden"
           />
 
@@ -136,7 +157,7 @@ export function AvatarUploader({
             type="button"
             variant="outline"
             onClick={() => fileInputRef.current?.click()}
-            disabled={uploadAvatar.isPending}
+            disabled={isPending}
             className="w-full cursor-pointer"
           >
             <Pencil className="size-4" /> Elegir imagen
@@ -145,13 +166,69 @@ export function AvatarUploader({
           <Button
             type="button"
             onClick={handleUpload}
-            disabled={!file || uploadAvatar.isPending}
+            disabled={!file || isPending}
             className="w-full enabled:cursor-pointer"
           >
             <Save className="size-4" /> {uploadAvatar.isPending ? "Guardando..." : "Guardar imagen"}
           </Button>
+
+          {avatarUrl && !previewUrl && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => setConfirmOpen(true)}
+              disabled={isPending}
+              className="w-full cursor-pointer"
+            >
+              <Trash2 className="size-4" />
+              {deleteAvatar.isPending ? "Eliminando..." : "Eliminar imagen"}
+            </Button>
+          )}
         </div>
       </DialogContent>
+
+      <Dialog
+        open={confirmOpen}
+        onOpenChange={(nextOpen) => {
+          if (deleteAvatar.isPending) return;
+
+          setConfirmOpen(nextOpen);
+        }}
+      >
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Eliminar imagen de perfil</DialogTitle>
+            <DialogDescription>
+              ¿Seguro que quieres eliminar tu imagen de perfil? Esta acción no
+              se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={deleteAvatar.isPending}
+                  className={"cursor-pointer"}
+                />
+              }
+            >
+              Cancelar
+            </DialogClose>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteAvatar.isPending}
+              className="cursor-pointer"
+            >
+              {deleteAvatar.isPending ? "Eliminando..." : "Sí, eliminar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Dialog>
   );
 }
