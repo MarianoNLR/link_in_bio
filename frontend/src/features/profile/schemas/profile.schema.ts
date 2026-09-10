@@ -27,9 +27,6 @@ export const profileSchema = z.object({
       z.string().max(160, "La biografía debe tener como máximo 160 caracteres"),
     ])
     .optional(),
-  avatarUrl: z
-    .union([emptyStringToUndefined, z.url("Ingresa una URL válida")])
-    .optional(),
   isPublic: z.boolean().optional(),
   theme: z.enum(["LIGHT", "DARK", "MIDNIGHT", "GRADIENT"]),
 })

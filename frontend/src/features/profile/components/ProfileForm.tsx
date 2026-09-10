@@ -25,7 +25,6 @@ export function ProfileForm({
       username: initialValues.username,
       displayName: initialValues.displayName,
       bio: initialValues.bio || "",
-      avatarUrl: initialValues.avatarUrl || "",
       isPublic: initialValues.isPublic,
       theme: initialValues.theme ?? "LIGHT",
     },
@@ -87,24 +86,6 @@ export function ProfileForm({
         {errors.bio && (
           <p id="profile-bio-error" className="text-sm text-destructive">
             {errors.bio.message}
-          </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="profile-avatar-url">URL del avatar</Label>
-        <Input
-          id="profile-avatar-url"
-          type="url"
-          aria-invalid={Boolean(errors.avatarUrl)}
-          aria-describedby={
-            errors.avatarUrl ? "profile-avatar-url-error" : undefined
-          }
-          {...register("avatarUrl")}
-        />
-        {errors.avatarUrl && (
-          <p id="profile-avatar-url-error" className="text-sm text-destructive">
-            {errors.avatarUrl.message}
           </p>
         )}
       </div>
