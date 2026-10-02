@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, LoaderCircle, LogIn, LogOut, UserRound } from 'lucide-react'
+import { CircleAlert, LayoutDashboard, LoaderCircle, LogIn, LogOut, UserRound } from 'lucide-react'
 import { useMe, useLogout } from '@/features/auth/api/auth.queries'
 import { toast } from 'sonner'
 
@@ -45,7 +45,11 @@ export function AppLayout() {
           className={`pointer-events-none fixed inset-x-0 top-0 z-40 h-14 border-b border-white/10 bg-white/5 shadow-sm shadow-black/5 backdrop-blur-md transition-opacity duration-3000 ease-in-out motion-reduce:transition-none ${showGlass ? 'opacity-100' : 'opacity-0'}`}
         />
       <header className="pointer-events-none fixed inset-x-0 top-0 z-50 bg-transparent text-white mix-blend-difference">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-end px-6">
+        <div className="relative mx-auto flex h-14 w-full max-w-5xl items-center justify-end px-6">
+          <p className="absolute left-6 right-20 flex items-center gap-1 text-xs opacity-60 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:whitespace-nowrap">
+            <CircleAlert className="size-3.5 shrink-0" aria-hidden="true" />
+            Las primeras peticiones pueden tardar un poco mientras el servidor se activa.
+          </p>
           <nav aria-label="Cuenta" className="pointer-events-auto flex items-center gap-2">
             {!isLoading && user && (
               <Link
