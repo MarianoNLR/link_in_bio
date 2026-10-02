@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom'
+import { useEffect } from 'react'
 import { useRegisterClick } from '@/features/links/api/links.queries'
 import { PublicLinkList } from '@/features/links/components/PublicLinkList'
 import { usePublicProfile } from '../api/profile.queries'
+import { registerProfileView } from '../api/profile.api'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
 
@@ -18,6 +20,12 @@ export function PublicProfilePage() {
   const { mutate: registerClick } = useRegisterClick()
 
   useDocumentTitle(profile ? `${profile.displayName ?? profile.username} | Link in Bio` : 'Link in Bio')
+
+  useEffect(() => {
+    if (!profile) return
+
+    void registerProfileView(profile.username).catch(() => undefined)
+  }, [profile])
 
   if (isLoading) {
     return (

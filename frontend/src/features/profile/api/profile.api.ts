@@ -8,6 +8,7 @@ export type Profile = {
   bio: string | null
   avatarUrl: string | null
   isPublic: boolean
+  totalViews: number
   theme: 'LIGHT' | 'DARK' | 'MIDNIGHT' | 'GRADIENT'
 }
 
@@ -25,6 +26,10 @@ export type PublicProfile = Pick<Profile, 'username' | 'displayName' | 'bio' | '
 
 export function getPublicProfile(username: string) {
   return apiClient.get<PublicProfile>(`/profiles/${username}`)
+}
+
+export function registerProfileView(username: string) {
+  return apiClient.post<void>(`/profiles/${username}/view`)
 }
 
 export function uploadAvatar(file: File) {
