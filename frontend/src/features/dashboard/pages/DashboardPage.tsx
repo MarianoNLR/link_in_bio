@@ -1,8 +1,12 @@
 import { useLinks } from "@/features/links/api/links.queries"
+import { useProfile } from "@/features/profile/api/profile.queries"
+import { buttonVariants } from "@/components/ui/button"
+import { ExternalLink } from "lucide-react"
 import { useDocumentTitle } from "@/hooks/useDocumentTitle"
 
 export function DashboardPage() {
   const { data: links, isPending, isError } = useLinks()
+  const { data: profile } = useProfile()
   useDocumentTitle("Dashboard | Link in Bio")
 
   if (isPending) {
@@ -23,7 +27,21 @@ export function DashboardPage() {
 
   return (
     <section className="mx-auto w-full max-w-5xl px-6 pt-20 pb-24">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold">Dashboard</h1>
+        {profile && (
+          <a
+            href={`/${encodeURIComponent(profile.username)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Ver perfil público
+            <ExternalLink aria-hidden="true" />
+            <span className="sr-only"> (se abre en una pestaña nueva)</span>
+          </a>
+        )}
+      </div>
       <p className="mt-2 text-muted-foreground">
         Acá vas a encontrar las estadísticas de tu cuenta y tus links.
       </p>
