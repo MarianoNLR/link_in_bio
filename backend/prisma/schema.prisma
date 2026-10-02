@@ -20,6 +20,7 @@ model User {
 
   theme    Theme   @default(LIGHT)
   isPublic Boolean @default(true)
+  totalViews Int   @default(0)
 
   links Link[]
 

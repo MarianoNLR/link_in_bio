@@ -12,6 +12,8 @@ import {
   UseGuards,
   UseInterceptors,
   Post,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -19,6 +21,7 @@ import { AuthGuard } from '../auth/guards/auth.guard.js';
 import { CurrentUserId } from '../auth/decorators/current-user-id.decorator.js';
 import { ProfileService } from './profile.service.js';
 import { UpdateProfileDto } from './dto/update-profile.dto.js';
+import { ProfileViewRateLimitGuard } from './guards/profile-view-rate-limit.guard.js';
 
 const MAX_AVATAR_SIZE = 10 * 1024 * 1024;
 
@@ -73,5 +76,12 @@ export class ProfileController {
   @Get(':username')
   getPublicProfile(@Param('username') username: string) {
     return this.profileService.getPublicProfile(username);
+  }
+
+  @Post(':username/view')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(ProfileViewRateLimitGuard)
+  async registerView(@Param('username') username: string) {
+    await this.profileService.registerView(username);
   }
 }
