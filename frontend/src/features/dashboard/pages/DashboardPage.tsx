@@ -1,7 +1,8 @@
 import { useLinks } from "@/features/links/api/links.queries"
 import { useProfile } from "@/features/profile/api/profile.queries"
 import { buttonVariants } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
+import { Popover } from "@base-ui/react/popover"
+import { ExternalLink, Info } from "lucide-react"
 import { useDocumentTitle } from "@/hooks/useDocumentTitle"
 
 export function DashboardPage() {
@@ -46,11 +47,37 @@ export function DashboardPage() {
         Acá vas a encontrar las estadísticas de tu cuenta y tus links.
       </p>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-2xl border border-border bg-card p-6 text-card-foreground">
           <h2 className="text-sm font-medium text-muted-foreground">Total de clicks</h2>
           <p className="mt-4 text-3xl font-semibold tabular-nums">{formatNumber(totalClicks)}</p>
           <p className="mt-2 text-sm text-muted-foreground">En todos tus links</p>
+        </article>
+
+        <article className="rounded-2xl border border-border bg-card p-6 text-card-foreground">
+          <div className="flex items-center gap-1">
+            <h2 className="text-sm font-medium text-muted-foreground">Visitantes</h2>
+            <Popover.Root>
+              <Popover.Trigger
+                openOnHover
+                delay={200}
+                closeDelay={100}
+                aria-label="Acerca de la métrica de visitantes"
+                className="rounded-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <Info aria-hidden="true" className="size-4" />
+              </Popover.Trigger>
+              <Popover.Portal>
+                <Popover.Positioner side="top" align="start" sideOffset={8}>
+                  <Popover.Popup className="w-64 rounded-lg border border-border bg-popover p-3 text-sm leading-relaxed text-popover-foreground shadow-md outline-none">
+                    Representa vistas registradas del perfil. No equivale necesariamente a visitantes únicos.
+                  </Popover.Popup>
+                </Popover.Positioner>
+              </Popover.Portal>
+            </Popover.Root>
+          </div>
+          <p className="mt-4 text-3xl font-semibold tabular-nums">{formatNumber(profile?.totalViews ?? 0)}</p>
+          <p className="mt-2 text-sm text-muted-foreground">Vistas registradas del perfil</p>
         </article>
 
         <article className="rounded-2xl border border-border bg-card p-6 text-card-foreground">

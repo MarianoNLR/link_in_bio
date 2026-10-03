@@ -42,6 +42,7 @@ export class ProfileService {
         avatarUrl: true,
         theme: true,
         isPublic: true,
+        totalViews: true,
       },
     });
 
@@ -80,6 +81,7 @@ export class ProfileService {
         avatarUrl: true,
         theme: true,
         isPublic: true,
+        totalViews: true,
       },
     });
   }
@@ -95,6 +97,7 @@ export class ProfileService {
         avatarUrl: true,
         theme: true,
         isPublic: true,
+        totalViews: true,
       },
     });
 
@@ -128,6 +131,7 @@ export class ProfileService {
         avatarUrl: true,
         theme: true,
         isPublic: true,
+        totalViews: true,
       },
     });
   }
@@ -172,5 +176,23 @@ export class ProfileService {
     }
 
     return profile;
+  }
+
+  async registerView(username: string) {
+    const result = await this.prisma.user.updateMany({
+      where: {
+        username,
+        isPublic: true,
+      },
+      data: {
+        totalViews: {
+          increment: 1,
+        },
+      },
+    });
+
+    if (result.count === 0) {
+      throw new NotFoundException('Profile not found');
+    }
   }
 }
