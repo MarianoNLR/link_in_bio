@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -10,6 +11,7 @@ import {
 } from "@/features/auth/schemas/login.schema"
 import { useLogin } from "@/features/auth/api/auth.queries"
 import { useNavigate } from "react-router-dom"
+import { ApiError } from "@/api/api-error"
 
 export function LoginForm() {
   const {
@@ -25,11 +27,21 @@ export function LoginForm() {
   })
   const navigate = useNavigate()
   const loginMutation = useLogin()
+  const [loginError, setLoginError] = useState<string | null>(null)
 
   const onSubmit = (data: LoginFormValues) => {
+    setLoginError(null)
     loginMutation.mutate(data, {
       onSuccess: () => {
         navigate("/app/profile")
+      },
+      onError: (error) => {
+        if (error instanceof ApiError && error.status === 401) {
+          setLoginError("Correo o contraseña incorrectos.")
+          return
+        }
+
+        setLoginError("No se pudo iniciar sesión. Intentá de nuevo.")
       },
     })
   }
@@ -69,6 +81,15 @@ export function LoginForm() {
           </p>
         )}
       </div>
+
+      {loginError && (
+        <p
+          role="alert"
+          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+        >
+          {loginError}
+        </p>
+      )}
 
       <Button className="w-full cursor-pointer" type="submit">
         Iniciar sesión
