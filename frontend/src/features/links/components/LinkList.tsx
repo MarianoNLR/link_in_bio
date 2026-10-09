@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -101,7 +102,7 @@ export function LinkList() {
   };
 
   if (isPending) {
-    return <p>Cargando links...</p>;
+    return <LinkListSkeleton />;
   }
 
   if (isError) {
@@ -182,4 +183,8 @@ export function LinkList() {
       />
     </>
   );
+
+}
+function LinkListSkeleton() {
+  return <div className="space-y-3" role="status" aria-busy="true"><span className="sr-only">Cargando links...</span>{Array.from({ length: 3 }, (_, index) => <div key={index} className="flex items-center gap-4 rounded-xl border bg-card p-4"><Skeleton className="size-5" /><div className="flex-1 space-y-2"><Skeleton className="h-4 w-2/5" /><Skeleton className="h-3 w-3/5" /></div><Skeleton className="h-8 w-16" /></div>)}</div>;
 }

@@ -4,14 +4,15 @@ import { buttonVariants } from "@/components/ui/button"
 import { Popover } from "@base-ui/react/popover"
 import { ExternalLink, Info } from "lucide-react"
 import { useDocumentTitle } from "@/hooks/useDocumentTitle"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function DashboardPage() {
   const { data: links, isPending, isError } = useLinks()
-  const { data: profile } = useProfile()
+  const { data: profile, isPending: isProfilePending } = useProfile()
   useDocumentTitle("Dashboard | Link in Bio")
 
-  if (isPending) {
-    return <></>
+  if (isPending || isProfilePending) {
+    return <DashboardSkeleton />
   }
 
   if (isError || !links) {
@@ -156,6 +157,7 @@ export function DashboardPage() {
                   className="min-w-0 rounded-sm underline-offset-4 hover:underline"
                   title={link.url}
                 >
+
                   <span className="block truncate text-sm font-medium">{link.title || link.url}</span>
                   <span className="block truncate text-xs text-muted-foreground">{link.url}</span>
                 </a>
@@ -175,4 +177,8 @@ export function DashboardPage() {
       </section>
     </section>
   )
+}
+
+function DashboardSkeleton() {
+  return <section className="mx-auto w-full max-w-5xl px-6 pt-20 pb-24" role="status" aria-busy="true"><span className="sr-only">Cargando estadísticas...</span><div className="flex justify-between"><Skeleton className="h-8 w-36" /><Skeleton className="h-9 w-40" /></div><div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{Array.from({ length: 4 }, (_, index) => <div key={index} className="rounded-2xl border p-6"><Skeleton className="h-4 w-3/5" /><Skeleton className="mt-4 h-9 w-2/5" /></div>)}</div><Skeleton className="mt-6 h-72 w-full rounded-2xl" /></section>
 }

@@ -6,6 +6,7 @@ import { usePublicProfile } from '../api/profile.queries'
 import { registerProfileView } from '../api/profile.api'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
+import { Skeleton } from "@/components/ui/skeleton"
 
 const themeClasses = {
   LIGHT: 'bg-slate-50 text-slate-900',
@@ -16,7 +17,7 @@ const themeClasses = {
 
 export function PublicProfilePage() {
   const { username = '' } = useParams<{ username: string }>()
-  const { data: profile, isLoading, isError } = usePublicProfile(username)
+  const { data: profile, isPending, isLoading, isError } = usePublicProfile(username)
   const { mutate: registerClick } = useRegisterClick()
 
   useDocumentTitle(profile ? `${profile.displayName ?? profile.username} | Link in Bio` : 'Link in Bio')
@@ -28,6 +29,10 @@ export function PublicProfilePage() {
   }, [profile])
 
   if (isLoading) {
+  if (isPending) {
+    return <PublicProfileSkeleton />
+  }
+
     return (
       <div role="status" className="flex flex-1 justify-center px-6 py-24">
         <span className="sr-only">Cargando perfil público...</span>
@@ -83,4 +88,8 @@ export function PublicProfilePage() {
   )
 }
 
+
+function PublicProfileSkeleton() {
+  return <section className="flex-1 bg-slate-50 px-6 py-20 sm:py-24" role="status" aria-busy="true"><span className="sr-only">Cargando perfil público...</span><div className="mx-auto w-full max-w-md space-y-4 rounded-3xl border border-slate-200/60 bg-white/50 px-5 py-8"><Skeleton className="mx-auto size-42 rounded-full" /><Skeleton className="mx-auto h-10 w-3/5" />{Array.from({ length: 3 }, (_, index) => <Skeleton key={index} className="h-16 w-full rounded-2xl" />)}</div></section>
+}
 export default PublicProfilePage
