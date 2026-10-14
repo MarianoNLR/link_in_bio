@@ -20,7 +20,13 @@ export function ProfilePage() {
   }
 
   if (isError || !profile) {
-    return <p>No se pudo cargar el perfil.</p>;
+    return (
+      <div className="flex flex-1 items-center justify-center px-6 py-20">
+        <p role="alert" className="text-center text-destructive">
+          No se pudo cargar el perfil.
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -58,7 +64,7 @@ export function ProfilePage() {
                 },
                 onError: () => {
                   toast.error(
-                    "No se pudo actualizar el perfil. Inténtalo de nuevo.",
+                    "No se pudo actualizar el perfil. Intentá de nuevo.",
                   );
                 },
               });

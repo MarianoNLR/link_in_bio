@@ -6,6 +6,7 @@ import {
 } from "../features/auth/lib/auth-token";
 import type { AuthTokens } from "../features/auth/lib/auth-token";
 import { ApiError } from "./api-error";
+import { isServerUnavailable } from "./server-error";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const AUTH_ENDPOINTS = new Set([
@@ -15,6 +16,16 @@ const AUTH_ENDPOINTS = new Set([
   "/auth/logout",
 ]);
 let refreshPromise: Promise<void> | null = null;
+
+function redirectToServerUnavailable() {
+  if (window.location.pathname === "/server-unavailable") return;
+
+  const returnTo =
+    window.location.pathname + window.location.search + window.location.hash;
+  window.location.replace(
+    "/server-unavailable?returnTo=" + encodeURIComponent(returnTo),
+  );
+}
 
 function expireSession() {
   removeAccessToken();
@@ -39,8 +50,11 @@ async function refreshSession(previousVersion: string | null): Promise<void> {
         method: "POST",
         credentials: "include",
       });
-      if (!response.ok)
-        throw new ApiError(response.status, "Session refresh failed");
+      if (!response.ok) {
+        const error = new ApiError(response.status, "Session refresh failed");
+        if (isServerUnavailable(error)) redirectToServerUnavailable();
+        throw error;
+      }
       const tokens = (await response.json()) as AuthTokens;
       if (typeof tokens.accessToken !== "string" || !tokens.accessToken) {
         throw new ApiError(502, "Invalid refresh response");
@@ -51,15 +65,23 @@ async function refreshSession(previousVersion: string | null): Promise<void> {
       }
       setAuthTokens(tokens);
     } catch (error) {
+      const apiError =
+        error instanceof ApiError
+          ? error
+          : new ApiError(0, "Unable to reach the server");
+
+      if (isServerUnavailable(apiError)) {
+        redirectToServerUnavailable();
+      }
+
       if (
-        error instanceof ApiError &&
-        error.status === 401 &&
+        apiError.status === 401 &&
         getSessionVersion() === version
       ) {
         expireSession();
       }
 
-      throw error;
+      throw apiError;
     }
   };
 
@@ -86,7 +108,9 @@ async function request<T>(
 
   const isFormData = options.body instanceof FormData;
 
-  const response = await fetch(`${API_URL}${path}`, {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
     ...options,
     credentials: "include",
     headers: {
@@ -98,7 +122,13 @@ async function request<T>(
       }),
       ...options.headers,
     },
-  });
+    });
+  } catch {
+    // fetch rejects when a response cannot be obtained, such as when the API is down.
+    const error = new ApiError(0, "Unable to reach the server");
+    if (isServerUnavailable(error)) redirectToServerUnavailable();
+    throw error;
+  }
 
   if (response.status === 401 && canRefresh && token) {
     if (!retried) {
@@ -110,10 +140,15 @@ async function request<T>(
   }
 
   if (!response.ok) {
-    throw new ApiError(
+    const error = new ApiError(
       response.status,
       response.statusText || "An error occurred while processing the request.",
     );
+    if (isServerUnavailable(error)) {
+      redirectToServerUnavailable();
+    }
+
+    throw error;
   }
 
   const responseBody = await response.text();

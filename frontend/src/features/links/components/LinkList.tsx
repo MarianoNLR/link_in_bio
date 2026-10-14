@@ -39,7 +39,10 @@ export function LinkList() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingLink, setEditingLink] = useState<Link | null>(null);
   const [deletingLink, setDeletingLink] = useState<Link | null>(null);
-  const { data: platforms = [] } = usePlatforms();
+  const {
+    data: platforms = [],
+    isError: isPlatformsError,
+  } = usePlatforms();
   const updateLink = useUpdateLink();
   const deleteLink = useDeleteLink();
   const createLink = useCreateLink();
@@ -78,26 +81,32 @@ export function LinkList() {
     setPendingOrder(reorderedIds);
     reorderLinks.mutate(reorderedIds, {
       onSettled: () => setPendingOrder(null),
-      onError: () => toast.error("No se pudo guardar el orden de los links."),
+      onError: () =>
+        toast.error("No se pudo guardar el orden de los links."),
     });
   };
 
   const handleAddSubmit = (data: AddLinkFormValues) => {
     createLink.mutate(data, {
       onSuccess: () => setIsAddDialogOpen(false),
+      onError: () => toast.error("No se pudo agregar el link."),
     });
   };
 
   const handleEditSubmit = (linkId: string, data: EditLinkData) => {
     updateLink.mutate(
       { linkId, data },
-      { onSuccess: () => setEditingLink(null) },
+      {
+        onSuccess: () => setEditingLink(null),
+        onError: () => toast.error("No se pudo actualizar el link."),
+      },
     );
   };
 
   const handleDeleteConfirm = (link: Link) => {
     deleteLink.mutate(link.id, {
       onSuccess: () => setDeletingLink(null),
+      onError: () => toast.error("No se pudo eliminar el link."),
     });
   };
 
@@ -105,8 +114,12 @@ export function LinkList() {
     return <LinkListSkeleton />;
   }
 
-  if (isError) {
-    return <p role="alert">No se pudieron cargar los links.</p>;
+  if (isError || isPlatformsError) {
+    return (
+      <p role="alert" className="text-center text-destructive">
+        No se pudieron cargar los links.
+      </p>
+    );
   }
 
   return (

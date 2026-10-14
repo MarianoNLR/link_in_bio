@@ -45,8 +45,13 @@ export function PublicProfilePage() {
   }
 
   if (isError || !profile) {
-
-    return <p>No se pudo cargar el perfil público.</p>
+    return (
+      <div className="flex flex-1 items-center justify-center px-6 py-20">
+        <p role="alert" className="text-center text-destructive">
+          No se pudo cargar el perfil público.
+        </p>
+      </div>
+    )
   }
 
   return (

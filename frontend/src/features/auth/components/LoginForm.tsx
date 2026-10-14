@@ -85,14 +85,18 @@ export function LoginForm() {
       {loginError && (
         <p
           role="alert"
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-sm text-destructive"
         >
           {loginError}
         </p>
       )}
 
-      <Button className="w-full cursor-pointer" type="submit">
-        Iniciar sesión
+      <Button
+        className="w-full cursor-pointer"
+        type="submit"
+        disabled={loginMutation.isPending}
+      >
+        {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar sesión"}
       </Button>
     </form>
   )
