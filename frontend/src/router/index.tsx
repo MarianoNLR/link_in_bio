@@ -6,6 +6,7 @@ import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
 import { ProfilePage } from '@/features/profile/pages/ProfilePage';
 import { PublicProfilePage } from '@/features/profile/pages/PublicProfilePage';
 import { AppLayout } from '@/components/layout/AppLayout';
+import { ServerUnavailablePage } from '@/features/errors/pages/ServerUnavailablePage';
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <AuthPage />,
+      },
+      {
+        path: '/server-unavailable',
+        element: <ServerUnavailablePage />,
       },
       {
         element: <ProtectedRoute />,

@@ -15,7 +15,13 @@ export function DashboardPage() {
   }
 
   if (isError || !links) {
-    return <p role="alert">No se pudieron cargar las estadísticas.</p>
+    return (
+      <div className="flex flex-1 items-center justify-center px-6 py-20">
+        <p role="alert" className="text-center text-destructive">
+          No se pudieron cargar las estadísticas.
+        </p>
+      </div>
+    )
   }
 
   const totalClicks = links.reduce((total, link) => total + link.clickCount, 0)

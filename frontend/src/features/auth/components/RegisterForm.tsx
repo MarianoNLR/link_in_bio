@@ -11,7 +11,6 @@ import {
 } from "@/features/auth/schemas/register.schema"
 import { useRegister } from "@/features/auth/api/auth.queries"
 import { useNavigate } from "react-router-dom"
-import { ApiError } from "@/api/api-error"
 
 export function RegisterForm() {
   const {
@@ -38,17 +37,7 @@ export function RegisterForm() {
       onSuccess: () => {
         navigate("/app/profile")
       },
-      onError: (error) => {
-        if (
-          error instanceof ApiError &&
-          (error.status === 0 || error.status >= 500)
-        ) {
-          setRegisterError(
-            "El servidor no está disponible en este momento. Intentá nuevamente más tarde.",
-          )
-          return
-        }
-
+      onError: () => {
         setRegisterError("No se pudo crear la cuenta. Intentá de nuevo.")
       },
     })

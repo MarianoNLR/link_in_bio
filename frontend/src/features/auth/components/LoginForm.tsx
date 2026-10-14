@@ -41,16 +41,6 @@ export function LoginForm() {
           return
         }
 
-        if (
-          error instanceof ApiError &&
-          (error.status === 0 || error.status >= 500)
-        ) {
-          setLoginError(
-            "El servidor no está disponible en este momento. Intentá nuevamente más tarde.",
-          )
-          return
-        }
-
         setLoginError("No se pudo iniciar sesión. Intentá de nuevo.")
       },
     })
