@@ -86,7 +86,9 @@ async function request<T>(
 
   const isFormData = options.body instanceof FormData;
 
-  const response = await fetch(`${API_URL}${path}`, {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
     ...options,
     credentials: "include",
     headers: {
@@ -98,7 +100,11 @@ async function request<T>(
       }),
       ...options.headers,
     },
-  });
+    });
+  } catch {
+    // fetch rejects when a response cannot be obtained, such as when the API is down.
+    throw new ApiError(0, "Unable to reach the server");
+  }
 
   if (response.status === 401 && canRefresh && token) {
     if (!retried) {

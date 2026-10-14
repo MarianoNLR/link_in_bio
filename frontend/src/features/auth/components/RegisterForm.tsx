@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -10,6 +11,7 @@ import {
 } from "@/features/auth/schemas/register.schema"
 import { useRegister } from "@/features/auth/api/auth.queries"
 import { useNavigate } from "react-router-dom"
+import { ApiError } from "@/api/api-error"
 
 export function RegisterForm() {
   const {
@@ -28,17 +30,28 @@ export function RegisterForm() {
   })
   const navigate = useNavigate()
   const registerMutation = useRegister()
+  const [registerError, setRegisterError] = useState<string | null>(null)
 
   const onSubmit = (data: RegisterFormValues) => {
+    setRegisterError(null)
     registerMutation.mutate(data, {
-      onSuccess: (response) => {
-        console.log("User registered successfully:", response.user)
+      onSuccess: () => {
         navigate("/app/profile")
       },
       onError: (error) => {
-        console.error("Error registering user:", error)
+        if (
+          error instanceof ApiError &&
+          (error.status === 0 || error.status >= 500)
+        ) {
+          setRegisterError(
+            "El servidor no está disponible en este momento. Intentá nuevamente más tarde.",
+          )
+          return
+        }
+
+        setRegisterError("No se pudo crear la cuenta. Intentá de nuevo.")
       },
-    });
+    })
   }
 
   return (
@@ -144,8 +157,21 @@ export function RegisterForm() {
         )}
       </div>
 
-      <Button className="w-full cursor-pointer" type="submit">
-        Crear cuenta
+      {registerError && (
+        <p
+          role="alert"
+          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-sm text-destructive"
+        >
+          {registerError}
+        </p>
+      )}
+
+      <Button
+        className="w-full cursor-pointer"
+        type="submit"
+        disabled={registerMutation.isPending}
+      >
+        {registerMutation.isPending ? "Creando cuenta..." : "Crear cuenta"}
       </Button>
     </form>
   )
